@@ -1,34 +1,33 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Acreditación ANEIAP</title>
 
 <style>
     body {
         font-family: Arial, sans-serif;
         background: #f4f4f4;
-        padding: 20px;
-        text-align: center;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
-
     .card {
         background: white;
         padding: 25px;
         border-radius: 14px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.13);
         max-width: 420px;
-        margin: auto;
-        margin-top: 40px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
     }
-
     #estado {
-        margin-top: 25px;
-        font-size: 22px;
+        margin-top: 20px;
+        font-size: 20px;
         font-weight: bold;
     }
-
     .ok { color: green; }
     .err { color: red; }
     .warn { color: orange; }
@@ -37,59 +36,71 @@
 
 <body>
 <div class="card">
-    <h2>Acreditación ANEIAP</h2>
+    <h2>Acreditación ANEIAP 2026</h2>
     <p>Procesando acreditación...</p>
 
     <div id="estado"></div>
 </div>
 
 <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbwjMa5WG1AIzLrxSeeDMBS0UQ7swSQSAD3YbXwMOgtMqiJfmUutBwhQEvZ6W0btypFoKA/exec";
 
-    // Lee parámetros de la URL
+    // URL de tu Apps Script
+    const API_URL = "AQUÍ_PONES_TU_URL_DEL_SCRIPT";
+
+    // Obtener parámetros del URL
     function getParam(name) {
-        const url = new URL(window.location.href);
-        return url.searchParams.get(name);
+        return new URL(window.location.href).searchParams.get(name);
     }
 
     async function procesar() {
         const estado = document.getElementById("estado");
-        const id = getParam("id");   // <-- viene desde el NFC
 
+        // ID proveniente del NFC
+        const id = getParam("id");
         if (!id) {
-            estado.innerHTML = "<span class='err'>❌ El sticker NFC no tiene un ID válido.</span>";
+            estado.innerHTML = "<span class='err'>❌ No se encontró el ID del sticker NFC.</span>";
             return;
         }
 
+        // User-Agent del dispositivo
+        const uaString = navigator.userAgent || "unknown";
+
+        // URL FINAL que se enviará al Apps Script
+        const url = `${API_URL}?id=${encodeURIComponent(id)}&ua=${encodeURIComponent(uaString)}`;
+
+        estado.innerHTML = "Enviando datos...";
+
         try {
-            const url = `${API_URL}?id=${encodeURIComponent(id)}`;
             const resp = await fetch(url);
             const data = await resp.json();
 
+            console.log("Respuesta del servidor:", data);
+
             if (data.estado === "ok") {
-                estado.innerHTML = `<span class='ok'>✔ Acreditación exitosa: ${data.extra.nombre}</span>`;
+                estado.innerHTML = `<span class='ok'>✔ Acreditación exitosa: ${data.extra?.nombre || id}</span>`;
             }
             else if (data.estado === "duplicado") {
-                estado.innerHTML = `<span class='warn'>⚠ Ya había sido acreditado previamente</span>`;
+                estado.innerHTML = `<span class='warn'>⚠ Ya había sido acreditado antes</span>`;
             }
             else if (data.estado === "fuera_horario") {
-                estado.innerHTML = `<span class='err'>⏰ Fuera de horario (${data.extra.minutes_late} min tarde)</span>`;
+                estado.innerHTML = `<span class='err'>⏰ Fuera de horario (${data.minutesLate} min tarde)</span>`;
             }
             else if (data.estado === "denegado") {
-                estado.innerHTML = `<span class='err'>❌ Usuario no autorizado</span>`;
+                estado.innerHTML = `<span class='err'>❌ Dispositivo no autorizado</span>`;
             }
             else {
-                estado.innerHTML = `<span class='err'>❌ ${data.mensaje}</span>`;
+                estado.innerHTML = `<span class='err'>❌ ${data.mensaje || "Error inesperado"}</span>`;
             }
 
-        } catch (error) {
-            console.error(error);
-            estado.innerHTML = "<span class='err'>❌ Error comunicando con el servidor</span>";
+        } catch (e) {
+            console.error(e);
+            estado.innerHTML = "<span class='err'>❌ Error conectando con el servidor</span>";
         }
     }
 
-    procesar(); // Ejecutar automáticamente
+    procesar();
 </script>
 
 </body>
 </html>
+
