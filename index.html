@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Acreditación ANEIAP</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f4f4f4;
+        padding: 20px;
+        text-align: center;
+    }
+
+    .card {
+        background: white;
+        padding: 25px;
+        border-radius: 14px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.13);
+        max-width: 420px;
+        margin: auto;
+        margin-top: 40px;
+    }
+
+    #estado {
+        margin-top: 25px;
+        font-size: 22px;
+        font-weight: bold;
+    }
+
+    .ok { color: green; }
+    .err { color: red; }
+    .warn { color: orange; }
+</style>
+</head>
+
+<body>
+<div class="card">
+    <h2>Acreditación ANEIAP</h2>
+    <p>Procesando acreditación...</p>
+
+    <div id="estado"></div>
+</div>
+
+<script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbwjMa5WG1AIzLrxSeeDMBS0UQ7swSQSAD3YbXwMOgtMqiJfmUutBwhQEvZ6W0btypFoKA/exec";
+
+    // Lee parámetros de la URL
+    function getParam(name) {
+        const url = new URL(window.location.href);
+        return url.searchParams.get(name);
+    }
+
+    async function procesar() {
+        const estado = document.getElementById("estado");
+        const id = getParam("id");   // <-- viene desde el NFC
+
+        if (!id) {
+            estado.innerHTML = "<span class='err'>❌ El sticker NFC no tiene un ID válido.</span>";
+            return;
+        }
+
+        try {
+            const url = `${API_URL}?id=${encodeURIComponent(id)}`;
+            const resp = await fetch(url);
+            const data = await resp.json();
+
+            if (data.estado === "ok") {
+                estado.innerHTML = `<span class='ok'>✔ Acreditación exitosa: ${data.extra.nombre}</span>`;
+            }
+            else if (data.estado === "duplicado") {
+                estado.innerHTML = `<span class='warn'>⚠ Ya había sido acreditado previamente</span>`;
+            }
+            else if (data.estado === "fuera_horario") {
+                estado.innerHTML = `<span class='err'>⏰ Fuera de horario (${data.extra.minutes_late} min tarde)</span>`;
+            }
+            else if (data.estado === "denegado") {
+                estado.innerHTML = `<span class='err'>❌ Usuario no autorizado</span>`;
+            }
+            else {
+                estado.innerHTML = `<span class='err'>❌ ${data.mensaje}</span>`;
+            }
+
+        } catch (error) {
+            console.error(error);
+            estado.innerHTML = "<span class='err'>❌ Error comunicando con el servidor</span>";
+        }
+    }
+
+    procesar(); // Ejecutar automáticamente
+</script>
+
+</body>
+</html>
