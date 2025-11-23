@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Acreditación ANEIAP</title>
+<title>Acreditación RNP Cali 2026</title>
 
 <style>
     body {
@@ -36,7 +36,7 @@
 
 <body>
 <div class="card">
-    <h2>Acreditación ANEIAP 2026</h2>
+    <h2>Acreditación RNP Cali 2026</h2>
     <p>Procesando acreditación...</p>
 
     <div id="estado"></div>
@@ -83,7 +83,7 @@
                 estado.innerHTML = `<span class='warn'>⚠ Ya había sido acreditado antes</span>`;
             }
             else if (data.estado === "fuera_horario") {
-                estado.innerHTML = `<span class='err'>⏰ Fuera de horario (${data.minutesLate} min tarde)</span>`;
+                estado.innerHTML = `<span class='err'>⏰ Acreditado por fuera de horario (${data.minutesLate} min tarde)</span>`;
             }
             else if (data.estado === "denegado") {
                 estado.innerHTML = `<span class='err'>❌ Dispositivo no autorizado</span>`;
