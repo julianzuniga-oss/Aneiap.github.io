@@ -83,7 +83,14 @@
                 estado.innerHTML = `<span class='warn'>⚠ Ya había sido acreditado antes</span>`;
             }
             else if (data.estado === "fuera_horario") {
-                estado.innerHTML = `<span class='err'>⏰ Acreditado por fuera de horario (${data.minutesLate} min tarde)</span>`;
+            
+                const minutos = data.extra.minutes_late || 0;
+            
+                estado.innerHTML = `
+                    <span class='err'>
+                        ⏰ Llegaste tarde (${minutos} minutos)
+                    </span>
+                `;
             }
             else if (data.estado === "denegado") {
                 estado.innerHTML = `<span class='err'>❌ Dispositivo no autorizado</span>`;
