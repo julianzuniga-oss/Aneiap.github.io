@@ -4,111 +4,253 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Acreditación RNP Cali 2026</title>
-
 <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
     body {
-        font-family: Arial, sans-serif;
-        background: #f4f4f4;
-        height: 100vh;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #103960 0%, #1a5280 100%);
+        min-height: 100vh;
         display: flex;
         justify-content: center;
         align-items: center;
+        padding: 20px;
     }
-    .card {
-        background: white;
-        padding: 25px;
-        border-radius: 14px;
-        max-width: 420px;
-        width: 90%;
+    
+    .container {
+        background: #ffffff;
+        border-radius: 20px;
+        max-width: 500px;
+        width: 100%;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+        animation: slideIn 0.5s ease-out;
+    }
+    
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .header {
+        background: linear-gradient(135deg, #103960 0%, #1a5280 100%);
+        padding: 35px 30px;
         text-align: center;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        position: relative;
     }
+    
+    .logo-container {
+        background: #ffffff;
+        border-radius: 15px;
+        margin: 0 auto 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        padding: 15px 25px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .logo {
+        height: 60px;
+        width: auto;
+        object-fit: contain;
+    }
+    
+    .header h1 {
+        color: #ffffff;
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+    
+    .header p {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 14px;
+    }
+    
+    .content {
+        padding: 40px 30px;
+        text-align: center;
+    }
+    
+    .spinner {
+        width: 50px;
+        height: 50px;
+        margin: 0 auto 25px;
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #6adb48;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    .processing-text {
+        color: #666;
+        font-size: 16px;
+        margin-bottom: 30px;
+    }
+    
     #estado {
         margin-top: 20px;
-        font-size: 20px;
-        font-weight: bold;
+        padding: 20px;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 1.6;
+        animation: fadeIn 0.5s ease-in;
     }
-    .ok { color: green; }
-    .err { color: red; }
-    .warn { color: orange; }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    .ok {
+        background: rgba(106, 219, 72, 0.1);
+        color: #2d7a1f;
+        border: 2px solid #6adb48;
+    }
+    
+    .err {
+        background: rgba(252, 0, 0, 0.1);
+        color: #c20000;
+        border: 2px solid #fc0000;
+    }
+    
+    .warn {
+        background: rgba(255, 165, 0, 0.1);
+        color: #cc7000;
+        border: 2px solid #ffa500;
+    }
+    
+    .icon {
+        font-size: 42px;
+        display: block;
+        margin-bottom: 15px;
+    }
+    
+    .status-info {
+        font-size: 14px;
+        margin-top: 10px;
+        opacity: 0.8;
+    }
+    
+    .footer {
+        background: #f8f8f8;
+        padding: 20px;
+        text-align: center;
+        color: #666;
+        font-size: 13px;
+        border-top: 1px solid #e0e0e0;
+    }
+    
+    @media (max-width: 480px) {
+        .header h1 {
+            font-size: 20px;
+        }
+        
+        .content {
+            padding: 30px 20px;
+        }
+    }
 </style>
 </head>
-
 <body>
-<div class="card">
-    <h2>Acreditación RNP Cali 2026</h2>
-    <p>Procesando acreditación...</p>
-
-    <div id="estado"></div>
+<div class="container">
+    <div class="header">
+        <div class="logo-container">
+            <img src="https://lh3.googleusercontent.com/d/16ocCF8qblqOzR362596hLM25H5S9RB-u" alt="Logo RNP" class="logo">
+            <img src="https://lh3.googleusercontent.com/d/1Lt2PBkjRI71CNEQFmlqimWc4l4Sdb3ie" alt="Logo 2" class="logo">
+        </div>
+        <h1>Acreditación RNP</h1>
+        <p>Cali 2026</p>
+    </div>
+    
+    <div class="content">
+        <div class="spinner" id="spinner"></div>
+        <p class="processing-text">Procesando acreditación...</p>
+        <div id="estado"></div>
+    </div>
+    
+    <div class="footer">
+        Sistema de Acreditación Digital
+    </div>
 </div>
 
 <script>
-
-    // URL de tu Apps Script
     const API_URL = "https://script.google.com/macros/s/AKfycbzWzqr1WXQBkNqlmSulE_2I9OUevG2PeNhYMkZwuhde7a3F3xgrtzT2wFlz-cBdvsufPA/exec";
-
-    // Obtener parámetros del URL
+    
     function getParam(name) {
         return new URL(window.location.href).searchParams.get(name);
     }
-
+    
     async function procesar() {
         const estado = document.getElementById("estado");
-
-        // ID proveniente del NFC
+        const spinner = document.getElementById("spinner");
+        
         const id = getParam("id");
         if (!id) {
-            estado.innerHTML = "<span class='err'>❌ No se encontró el ID del sticker NFC.</span>";
+            spinner.style.display = 'none';
+            estado.className = 'err';
+            estado.innerHTML = "<span class='icon'>❌</span>No se encontró el ID del sticker NFC.<div class='status-info'>Por favor, vuelve a escanear el código</div>";
             return;
         }
-
-        // User-Agent del dispositivo
+        
         const uaString = navigator.userAgent || "unknown";
-
-        // URL FINAL que se enviará al Apps Script
         const url = `${API_URL}?id=${encodeURIComponent(id)}&ua=${encodeURIComponent(uaString)}`;
-
-        estado.innerHTML = "Enviando datos...";
-
+        
         try {
             const resp = await fetch(url);
             const data = await resp.json();
-
             console.log("Respuesta del servidor:", data);
-
+            
+            spinner.style.display = 'none';
+            
             if (data.estado === "ok") {
-                estado.innerHTML = `<span class='ok'>✔ Acreditación exitosa: ${data.extra?.nombre || id}</span>`;
+                estado.className = 'ok';
+                estado.innerHTML = `<span class='icon'>✓</span><strong>¡Acreditación exitosa!</strong><div class='status-info'>${data.extra?.nombre || id}</div>`;
             }
             else if (data.estado === "duplicado") {
-                estado.innerHTML = `<span class='warn'>⚠ Ya había sido acreditado antes</span>`;
+                estado.className = 'warn';
+                estado.innerHTML = `<span class='icon'>⚠</span><strong>Atención</strong><div class='status-info'>Ya habías sido acreditado anteriormente</div>`;
             }
             else if (data.estado === "fuera_horario") {
-            
-                const minutos = data.extra.minutes_late || 0;
-            
-                estado.innerHTML = `
-                    <span class='warn'>
-                        ⏰ Llegaste tarde (${minutos} minutos)
-                    </span>
-                `;
+                const minutos = data.extra?.minutes_late || 0;
+                estado.className = 'warn';
+                estado.innerHTML = `<span class='icon'>⏰</span><strong>Llegada tardía</strong><div class='status-info'>Has llegado ${minutos} minutos tarde</div>`;
             }
             else if (data.estado === "denegado") {
-                estado.innerHTML = `<span class='err'>❌ Dispositivo no autorizado</span>`;
+                estado.className = 'err';
+                estado.innerHTML = `<span class='icon'>🚫</span><strong>Acceso denegado</strong><div class='status-info'>Dispositivo no autorizado</div>`;
             }
             else {
-                estado.innerHTML = `<span class='err'>❌ ${data.mensaje || "Error inesperado"}</span>`;
+                estado.className = 'err';
+                estado.innerHTML = `<span class='icon'>❌</span><strong>Error</strong><div class='status-info'>${data.mensaje || "Error inesperado"}</div>`;
             }
-
         } catch (e) {
             console.error(e);
-            estado.innerHTML = "<span class='err'>❌ Error conectando con el servidor</span>";
+            spinner.style.display = 'none';
+            estado.className = 'err';
+            estado.innerHTML = "<span class='icon'>❌</span><strong>Error de conexión</strong><div class='status-info'>No se pudo conectar con el servidor</div>";
         }
     }
-
+    
     procesar();
 </script>
-
 </body>
 </html>
-
-
